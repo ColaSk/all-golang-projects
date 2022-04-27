@@ -8,6 +8,7 @@ import "strings"
 通配'*': 例如 /static/*filepath，可以匹配/static/fav.ico，也可以匹配/static/js/jQuery.js，这种模式常用于静态服务器，能够递归地匹配子路径。
 
 TODO: 需要研究一下 gorouter httprouter
+TODO: 恶补一下前缀树
 
 */
 
