@@ -49,6 +49,7 @@ func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
 
 func (r *router) handle(c *Context) {
 
+	// 根据方法与url获取路由
 	n, params := r.getRoute(c.Method, c.Path)
 
 	if n != nil {

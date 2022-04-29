@@ -32,23 +32,15 @@ func New() *Engine {
 	return engine
 }
 
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger(), Recovery())
+	return engine
+}
+
 /*
 定义引擎对象功能
 */
-// // 添加路由
-// func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
-// 	engine.router.addRoute(method, pattern, handler)
-// }
-
-// // 定义get方法
-// func (engine *Engine) GET(pattern string, handler HandlerFunc) {
-// 	engine.addRoute("GET", pattern, handler)
-// }
-
-// // 定义post方法
-// func (engine *Engine) POST(pattern string, handler HandlerFunc) {
-// 	engine.addRoute("POST", pattern, handler)
-// }
 
 //定义运行服务
 func (engine *Engine) Run(addr string) error {
@@ -57,13 +49,20 @@ func (engine *Engine) Run(addr string) error {
 
 // 实现了Handler接口
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	var middlewares []HandlerFunc
+	var middlewares []HandlerFunc // 生成一个中间件函数数组
+
+	// 遍历路由组, 获取指定组的中间件
 	for _, group := range engine.groups {
+
+		// 判断前缀
 		if strings.HasPrefix(req.URL.Path, group.prefix) {
 			middlewares = append(middlewares, group.middlewares...)
 		}
 	}
+
+	// 生成上下文
 	c := newContext(w, req)
+	// 赋值上下文中间件处理函数
 	c.handlers = middlewares
 	engine.router.handle(c)
 }
