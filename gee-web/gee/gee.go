@@ -9,6 +9,16 @@ import (
 // 定义请求处理程序
 type HandlerFunc func(*Context)
 
+/*分组控制对象
+# 属性
+1. prefix: 前缀
+2. middlewares: 中间件
+3. parent: 父指针
+4. engine: 引擎指针
+# 功能
+1.
+
+*/
 // 分组控制
 type RouterGroup struct {
 	prefix      string
@@ -19,7 +29,7 @@ type RouterGroup struct {
 
 // 定义服务引擎
 type Engine struct {
-	*RouterGroup                // 继承
+	*RouterGroup                // 继承路由分组对象，作为顶层分组控制
 	router       *router        // 路由映射表
 	groups       []*RouterGroup // 存储所有组
 }
@@ -71,6 +81,7 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 定义路由组功能
 */
 
+// 添加中间件
 func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
 	group.middlewares = append(group.middlewares, middlewares...)
 }

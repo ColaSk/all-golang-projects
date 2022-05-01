@@ -5,6 +5,14 @@ import (
 	"strings"
 )
 
+/*路由对象
+# 属性:
+1. roots: 前缀树节点字典，存储每种请求方式的前缀树根节点
+2. handlers: 存储路由的处理函数
+# 功能:
+1. 添加路由
+2. 获取路由
+*/
 type router struct {
 	roots    map[string]*node       // 储存每种请求方式的根节点 roots['GET']
 	handlers map[string]HandlerFunc // 请求方式的处理函数 handlers['GET-/p/:lang/doc']
