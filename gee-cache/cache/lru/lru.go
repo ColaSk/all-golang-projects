@@ -21,6 +21,7 @@ type Value interface {
 	Len() int
 }
 
+//创建lru
 func New(maxBytes int64, onEvicted func(string, Value)) *Cache {
 	return &Cache{
 		maxBytes:  maxBytes,
