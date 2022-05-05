@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const defaultBasePath = "/_geecache"
+const defaultBasePath = "/_geecache/"
 
 //作为承载节点间 HTTP 通信的核心数据结构
 type HTTPPool struct {
