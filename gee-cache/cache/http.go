@@ -1,20 +1,26 @@
 package cache
 
 import (
+	"cache/consistenthash"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 )
 
 const defaultBasePath = "/_geecache/"
+const defaultReplicas = 50
 
 //作为承载节点间 HTTP 通信的核心数据结构
 type HTTPPool struct {
-	self     string // 自己的地址 (ip part)
-	basePath string // 通讯地址前缀
+	self        string // 自己的地址 (ip part)
+	basePath    string // 通讯地址前缀
+	mu          sync.Mutex
+	peers       *consistenthash.Map    // 一致性哈希算法
+	httpGetters map[string]*httpGetter // 映射远程节点与对应的httpGetter
 }
 
 func NewHTTPPool(self string) *HTTPPool {
@@ -55,6 +61,30 @@ func (p *HTTPPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Write(view.ByteSlice())
 }
+
+func (p *HTTPPool) Set(peers ...string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.peers = consistenthash.New(defaultReplicas, nil)
+	p.peers.Add(peers...)
+	p.httpGetters = make(map[string]*httpGetter, len(peers))
+	for _, peer := range peers {
+		p.httpGetters[peer] = &httpGetter{baseURL: peer + p.basePath}
+	}
+
+}
+
+func (p *HTTPPool) PickPeer(key string) (PeerGetter, bool) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if peer := p.peers.Get(key); peer != "" && peer != p.self {
+		p.Log("Pick peer %s", peer)
+		return p.httpGetters[peer], true
+	}
+	return nil, false
+}
+
+var _ PeerPicker = (*HTTPPool)(nil)
 
 // http 客户端
 type httpGetter struct {
