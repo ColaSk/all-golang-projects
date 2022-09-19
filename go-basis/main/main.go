@@ -5,9 +5,10 @@ import (
 )
 
 func main() {
-	basis.Test()
-	basis.List()
-	basis.MultiList()
-	basis.SliceList()
-	basis.Map()
+	// basis.Test()
+	// basis.List()
+	// basis.MultiList()
+	// basis.SliceList()
+	// basis.Map()
+	basis.Exce()
 }
