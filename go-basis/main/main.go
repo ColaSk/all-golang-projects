@@ -10,5 +10,6 @@ func main() {
 	// basis.MultiList()
 	// basis.SliceList()
 	// basis.Map()
-	basis.Exce()
+	// basis.Exce()
+	basis.Goroutine()
 }
