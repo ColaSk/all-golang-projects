@@ -11,5 +11,6 @@ func main() {
 	// basis.SliceList()
 	// basis.Map()
 	// basis.Exce()
-	basis.Goroutine()
+	// basis.Goroutine()
+	basis.ReflectTest()
 }
