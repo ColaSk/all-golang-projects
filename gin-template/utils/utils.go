@@ -2,6 +2,7 @@ package utils
 
 import (
 	"reflect"
+	"strconv"
 )
 
 func Default(s interface{}) {
@@ -20,18 +21,15 @@ func Default(s interface{}) {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 		value := v.Field(i)
-		tag := field.Tag
+		defaultTag := field.Tag.Get("default")
 
-		if value.Kind() != reflect.String {
-			continue
-		}
-		if tag != "" {
-			d := tag.Get("default")
-			if d != "" {
-				value.SetString(d)
+		switch value.Kind() {
+		case reflect.String:
+			value.SetString(defaultTag)
+		case reflect.Int:
+			if intV, err := strconv.ParseInt(defaultTag, 10, 64); err == nil {
+				value.SetInt(intV)
 			}
 		}
-
 	}
-
 }
