@@ -17,12 +17,16 @@ type response struct {
 	Message string `default:"success"`
 }
 
-func NewResponse() *response {
-
-	return &response{}
-
+func (r *response) Default() {
+	Default(r)
 }
 
-func Response(c *gin.Context, status int, data gin.H) {
+func NewResponse() *response {
+	r := &response{}
+	r.Default()
+	return r
+}
+
+func Response(c *gin.Context, status int, code int, data response) {
 	c.JSON(status, data)
 }

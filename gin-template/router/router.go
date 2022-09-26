@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"gintemp/middlewares"
+	"gintemp/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,9 +15,7 @@ func InitRouter() {
 
 	router.GET("/ping", func(c *gin.Context) {
 		fmt.Println("pang")
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+		utils.Response(c, 200, 200, *utils.NewResponse())
 	})
 
 	router.Run()

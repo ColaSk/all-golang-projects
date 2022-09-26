@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func Default(s interface{}) {
+func Default(s any) {
 	// 设置结构体默认值
 
 	t := reflect.TypeOf(s)

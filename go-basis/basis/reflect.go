@@ -28,7 +28,7 @@ func ReflectTest() {
 	fmt.Println(reflect.ValueOf(l))
 
 	setValueByReflect := func(x interface{}) {
-		fmt.Println("x的type是: ", reflect.TypeOf(x))
+		fmt.Println("x的type是: ", reflect.TypeOf(x).Elem())
 		fmt.Println("x的value是: ", reflect.ValueOf(x).Elem())
 		value := reflect.ValueOf(x)
 		// 反射中使用Elem()方法获取指针所指向的值
