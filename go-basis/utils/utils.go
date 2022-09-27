@@ -1,11 +1,14 @@
 package utils
 
+//类型约束
 type DefaultExtsConstraints interface {
 	any
 }
 
+// 定义修改函数类型
 type DefaultFunc[T DefaultExtsConstraints] func(*T)
 
+// 接口类型
 type DefaultExtInterface[T DefaultExtsConstraints] interface {
 	Apply(o *T)
 }
