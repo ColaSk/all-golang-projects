@@ -13,7 +13,7 @@ type User struct {
 }
 
 func SetUserInfo(info string) utils.DefaultExtInterface[User] {
-	return utils.NewDefaultExts[User](func(user *User) {
+	return utils.NewDefaultExts(func(user *User) {
 		user.info = info
 	})
 }
