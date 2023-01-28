@@ -1,17 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"gone"
 	"log"
-	"net/http"
 )
 
 func main() {
 
 	engine := gone.New()
 
-	engine.GET("/hello", helloHandler)
+	engine.POST("/hello", helloHandler)
 
 	log.Fatal(engine.Run(":9999"))
 
@@ -20,8 +18,9 @@ func main() {
 }
 
 // handler echoes r.URL.Header
-func helloHandler(w http.ResponseWriter, req *http.Request) {
-	for k, v := range req.Header {
-		fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
-	}
+func helloHandler(c *gone.Context) {
+	c.WriteJSON(200, map[string]interface{}{
+		"username": c.PostForm("username"),
+		"password": c.PostForm("password"),
+	})
 }
