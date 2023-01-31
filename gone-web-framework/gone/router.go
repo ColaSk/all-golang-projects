@@ -105,8 +105,6 @@ func (r *router) handle(context *Context) {
 		context.Params = params // 添加路由参数
 		key := r.createRouteKey(context.Method, node.GetPattern())
 
-		log.Printf(key)
-
 		if handler, ok := r.handlers[key]; ok {
 			handler(context)
 		} else {

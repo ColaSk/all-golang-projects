@@ -10,7 +10,7 @@ Trie 树 - 动态路由(dynamic route)解析
 */
 
 type Node struct {
-	pattern  string  // 待匹配的路由
+	pattern  string  // 待匹配的路由 最后一层节点 pattern才会设置为/p/:lang/doc
 	part     string  // 当前节点路由
 	children []*Node // 子节点
 	isWild   bool    // 是否精准匹配 part 含有 : 或 * 时为true
