@@ -3,6 +3,7 @@ package gone
 import (
 	"net/http"
 	"strings"
+	"text/template"
 )
 
 // 定义处理函数类型
@@ -13,6 +14,20 @@ type Engine struct {
 	*RouteGroup         // 继承路由分组，将engine作为顶层分组，并具有分组的一切能力
 	router      *router // 定义路由
 	groups      []*RouteGroup
+
+	// 模版渲染支持
+	htmlTemplates *template.Template
+	funcMap       template.FuncMap
+}
+
+// 自定义模版渲染函数
+func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
+	engine.funcMap = funcMap
+}
+
+// 加载模版到内存
+func (engine *Engine) LoadHTMLGlob(pattern string) {
+	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }
 
 // func (e *Engine) addRoute(method string, pattern string, handler HandleFunc) {
@@ -44,6 +59,7 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	context := NewContext(w, req)
 	// 将中间件赋值给上下文
 	context.handlers = middlewares
+	context.engine = e
 	e.router.handle(context)
 
 }

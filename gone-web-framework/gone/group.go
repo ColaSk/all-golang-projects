@@ -2,6 +2,8 @@ package gone
 
 import (
 	"log"
+	"net/http"
+	"path"
 )
 
 /*分组控制(Group Control)*/
@@ -37,6 +39,28 @@ func (group *RouteGroup) addRoute(method string, comp string, handler HandleFunc
 	pattern := group.prefix + comp
 	log.Printf("Route %4s - %s", method, pattern)
 	group.engine.router.addRoute(method, pattern, handler)
+}
+
+func (group *RouteGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandleFunc {
+	absolutePath := path.Join(group.prefix, relativePath)
+	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	return func(c *Context) {
+		file := c.Param("filepath")
+		// Check if file exists and/or if we have permission to access it
+		if _, err := fs.Open(file); err != nil {
+			c.WriteStatus(http.StatusNotFound)
+			return
+		}
+
+		fileServer.ServeHTTP(c.Writer, c.Req)
+	}
+}
+
+func (group *RouteGroup) Static(relativePath string, root string) {
+	handler := group.createStaticHandler(relativePath, http.Dir(root))
+	urlPattern := path.Join(relativePath, "/*filepath")
+	// Register GET handlers
+	group.GET(urlPattern, handler)
 }
 
 func (group *RouteGroup) GET(pattern string, handler HandleFunc) {

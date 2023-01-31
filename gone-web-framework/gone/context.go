@@ -17,6 +17,8 @@ type Context struct {
 
 	handlers []HandleFunc //  中间件函数
 	index    int          // 执行到第几个中间件
+
+	engine *Engine
 }
 
 // 上下文执行中间能力
@@ -70,10 +72,13 @@ func (c *Context) WriteData(code int, data []byte) {
 	c.Writer.Write(data)
 }
 
-func (c *Context) WriteHTML(code int, html string) {
+func (c *Context) WriteHTML(code int, name string, data interface{}) {
 	c.SetHeader("Content-Type", "text/html")
 	c.WriteStatus(code)
-	c.Writer.Write([]byte(html))
+	// c.Writer.Write([]byte(html))
+	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
+		c.Fail(500, err.Error())
+	}
 }
 
 func (c *Context) Fail(code int, err string) {

@@ -9,15 +9,8 @@ import (
 
 func main() {
 	r := gone.Default()
-	r.GET("/index", func(c *gone.Context) {
-		c.WriteHTML(http.StatusOK, "<h1>Index Page</h1>")
-	})
 	v1 := r.Group("/v1")
 	{
-		v1.GET("/", func(c *gone.Context) {
-			c.WriteHTML(http.StatusOK, "<h1>Hello gone</h1>")
-		})
-
 		v1.GET("/hello", func(c *gone.Context) {
 			// expect /hello?name=gonektutu
 			c.WriteString(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
