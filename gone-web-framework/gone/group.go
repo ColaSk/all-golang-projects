@@ -1,6 +1,8 @@
 package gone
 
-import "log"
+import (
+	"log"
+)
 
 /*分组控制(Group Control)*/
 
@@ -24,6 +26,11 @@ func (group *RouteGroup) Group(prefix string) *RouteGroup {
 	engine.groups = append(engine.groups, newGroup)
 
 	return newGroup
+}
+
+// 添加中间件
+func (group *RouteGroup) Use(middlewares ...HandleFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
 }
 
 func (group *RouteGroup) addRoute(method string, comp string, handler HandleFunc) {

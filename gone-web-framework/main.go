@@ -2,7 +2,9 @@ package main
 
 import (
 	"gone"
+	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -22,9 +24,17 @@ func main() {
 		})
 	}
 	v2 := r.Group("/v2")
+
+	v2.Use(func(c *gone.Context) {
+		// Start timer
+		t := time.Now()
+		// Calculate resolution time
+		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+	})
 	{
 		v2.GET("/hello/:name", func(c *gone.Context) {
 			// expect /hello/gonektutu
+			log.Printf("zzz")
 			c.WriteString(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
 		})
 		v2.POST("/login", func(c *gone.Context) {
@@ -33,7 +43,6 @@ func main() {
 				"password": c.PostForm("password"),
 			})
 		})
-
 	}
 
 	r.Run(":9999")

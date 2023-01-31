@@ -104,15 +104,15 @@ func (r *router) handle(context *Context) {
 	if node != nil {
 		context.Params = params // 添加路由参数
 		key := r.createRouteKey(context.Method, node.GetPattern())
-
-		if handler, ok := r.handlers[key]; ok {
-			handler(context)
-		} else {
+		context.handlers = append(context.handlers, r.handlers[key])
+	} else {
+		context.handlers = append(context.handlers, func(context *Context) {
 			context.WriteString(
 				http.StatusNotFound,
 				"404 NOT FOUND: %s\n",
 				context.Path)
-		}
+		})
 	}
 
+	context.Next()
 }

@@ -14,6 +14,18 @@ type Context struct {
 	Method     string
 	StatusCode int
 	Params     map[string]string // 路由中解析的参数列表
+
+	handlers []HandleFunc //  中间件函数
+	index    int          // 执行到第几个中间件
+}
+
+// 上下文执行中间能力
+func (c *Context) Next() {
+	c.index++
+	s := len(c.handlers)
+	for ; c.index < s; c.index++ {
+		c.handlers[c.index](c)
+	}
 }
 
 func (c *Context) Param(key string) string {
@@ -71,5 +83,6 @@ func NewContext(w http.ResponseWriter, req *http.Request) *Context {
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
+		index:  -1,
 	}
 }

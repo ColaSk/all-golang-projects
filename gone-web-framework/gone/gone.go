@@ -2,6 +2,7 @@ package gone
 
 import (
 	"net/http"
+	"strings"
 )
 
 // 定义处理函数类型
@@ -32,7 +33,17 @@ func (e *Engine) Run(addr string) error {
 
 // 实现 http.Handler 接口
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandleFunc
+
+	// 获取请求分组中的中间件
+	for _, group := range e.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	context := NewContext(w, req)
+	// 将中间件赋值给上下文
+	context.handlers = middlewares
 	e.router.handle(context)
 
 }
