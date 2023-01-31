@@ -76,6 +76,11 @@ func (c *Context) WriteHTML(code int, html string) {
 	c.Writer.Write([]byte(html))
 }
 
+func (c *Context) Fail(code int, err string) {
+	c.index = len(c.handlers)
+	c.WriteJSON(code, map[string]string{"message": err})
+}
+
 // 上下文构造函数
 func NewContext(w http.ResponseWriter, req *http.Request) *Context {
 	return &Context{

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	r := gone.New()
+	r := gone.Default()
 	r.GET("/index", func(c *gone.Context) {
 		c.WriteHTML(http.StatusOK, "<h1>Index Page</h1>")
 	})
@@ -42,6 +42,10 @@ func main() {
 				"username": c.PostForm("username"),
 				"password": c.PostForm("password"),
 			})
+		})
+		v2.GET("/panic", func(c *gone.Context) {
+			names := []string{"geektutu"}
+			c.WriteString(http.StatusOK, names[100])
 		})
 	}
 
